@@ -27,7 +27,9 @@ Experiment Setup:
 Close loop control method:
 
 1.) Create a 6-mode control method by dividing electrical degree (encoder position) into 8 sector for choosing duty cycle 
+
 2.) Vary duty cycles by using float variable (0 - 1) to increase or decrease duty cycles
+
 3.) Using encoder to control movement section and direction by comparing desired position to current position read by encoder
 
 Results:
