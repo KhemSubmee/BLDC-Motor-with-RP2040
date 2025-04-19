@@ -9,7 +9,7 @@ pins = [PWM(Pin(i, Pin.OUT), freq=20000) for i in range(2, 5)]
 
 MAX_DUTY = 15000
 DELAY_TIME = 0.01
-Kp = 0.02 #Proportional gain
+Kp = 0.02 # Proportional gain
 ENCODER_FULL_ROTATION = 1271  # Encoder counts per 360 degrees
 SECTOR_SIZE = 45  # Degrees per commutation sector
 
