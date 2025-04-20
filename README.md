@@ -35,8 +35,6 @@ _**positional sensing**_ and _**a control method**_ to drive the motor phases ba
 
 ![Rotating_field-compact](https://github.com/user-attachments/assets/5ddb5d96-c1f6-4ffd-aad6-fc284ba02ffe)
 
-In this project, both are handled in a simplified way using an _**incremental encoder**_ and a _**custom control method**_.
-
 ## Positional Sensors for BLDC Motors
 
 To properly control a BLDC motor, it’s essential to know the rotor’s position. Several types of sensors are commonly used for this purpose, each with its own advantages and drawbacks:
@@ -76,6 +74,8 @@ How it works:
 It consists of a rotor winding and two stator windings placed at 90° to each other. As the rotor turns, it induces sinusoidal voltages in the stator windings proportional to the rotor’s position. These signals are then converted to digital position data using a resolver-to-digital converter.
 
 ![image](https://github.com/user-attachments/assets/6c89b816-18af-40e3-a27e-d97d9903b7f6)
+
+### In this project, an _**incremental encoder**_ is used for position feedback because it is already built into the given BLDC motor.
 
 ## [Brushless Motor Controlling Method](https://www.renesas.com/en/support/engineer-school/brushless-dc-motor-02-inverter-pmw?srsltid=AfmBOooy_e6pUcm3HEjqYTa10uTOkbG9XOpBEfvfKHw1DI-_ry2SbONa)
 
@@ -130,6 +130,14 @@ Modern microcontrollers with built-in PWM modules and external inverter circuits
 
 Varying the duty cycle (the ON time within each switching period) changes the effective voltage.
 
+### For motor control, this project uses a semi-sinusoidal control method together with inverter-based switching.
+
+Instead of using conventional 120-degree conduction (which creates stepwise torque), the motor phases are controlled using a custom 6-mode control scheme where the duty cycles are varied smoothly within each sector of the electrical rotation. This semi-sinusoidal approach reduces torque ripple and improves rotation smoothness compared to basic 120° control, though it's simpler than full Field-Oriented Control (FOC).
+
+The motor driver, SimpleFOCMini, acts as an inverter by switching the current into the motor’s three phases. Pulse Width Modulation (PWM) is applied to adjust the voltage and control the phase currents, enabling precise manipulation of the stator’s magnetic field.
+
+This combined method provides a good balance between control simplicity, cost efficiency, and improved performance, making it suitable for experimental and educational mechatronics projects.
+
 # Close loop control method:
 
 This project implements a simple closed-loop position control for a BLDC motor using the following approach:
@@ -146,8 +154,20 @@ The duty cycle for each active phase is controlled using a floating-point variab
 
 The system continuously reads the current position from the motor’s encoder and compares it to the target position. Based on the difference, the control logic determines the movement direction and activates the appropriate sectors to drive the motor toward the desired position.
 
-# Results:
+## Code example
+```
+if sector == 0:
+ return (0, 10000, 0)
+ elif sector == 1:
+ return (0, d, int(d * t))
+ elif sector == 2:
+ return (0, int(d * (1 - t)), d)
+ elif sector == 3:
+ return (int(d * t), 0, d)
+```
+This code segment implements a semi-sinusoidal control method for a BLDC motor by assigning PWM duty cycles to each of the three motor phases (U, V, W) based on the current electrical sector. Using a constant base duty cycle d = 15000 and a float t ranging from 0 to 1 (representing the rotor’s progress within a sector), the duty cycles are smoothly varied to create stepped transitions between phases, reducing torque ripple and enabling smoother motor rotation. This approach simplifies sinusoidal control by approximating sinusoidal phase currents without requiring complex calculations, offering a practical balance between performance and implementation ease on hardware like the RP2040.
 
+# Results:
 
 https://github.com/user-attachments/assets/88a1d1a9-b69e-4c54-ac2b-c14129728297
 
