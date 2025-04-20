@@ -5,7 +5,7 @@ In present days brushless motors are becoming more popular in the industry field
 
 However, there are some drawbacks to choosing a brushless motor over brushed motor such as complex wiring, high cost for the motor's positional sensor and the motor's driver.
 
-The objective for this project is to create a simple close-loop position control system by using only the RP2040 and SimpleFOCMini via microPython code.
+The objective for this project is to create a simple close-loop position control system by using only the RP2040 and SimpleFOCMini via microPython code. The key point is being able to perform a field-oriented control (FOC) by using the SimpleFOCMini which can significantly lower the cost of running a BL motor.
 
 # Hardware used in this project:
 
@@ -26,7 +26,7 @@ SimpleFOCMini: https://docs.simplefoc.com/simplefocmini
 
 # Close loop control method:
 
-1.) Create a 6-mode control method by dividing electrical degree (encoder position) into 8 sector for choosing duty cycle 
+1.) Create a 6-mode control method by dividing electrical degree (encoder position) into 8 sector for choosing duty cycle paattern
 
 2.) Vary duty cycles by using float variable (0 - 1) to increase or decrease duty cycles
 
