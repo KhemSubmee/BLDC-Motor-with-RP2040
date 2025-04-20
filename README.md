@@ -1,12 +1,10 @@
 # BLDC-Motor-with-RP2040
-A mechatronics project to control a BLDC motor with microPython, using only RP2040 and SimpleFOCMini.
 
-In present days brushless motors are becoming more popular in the industry field due to its many advantages for example long lifespan, lower maintenance and less noise.
+In recent years, brushless DC (BLDC) motors have become increasingly popular in industrial applications due to their numerous advantages, including longer lifespan, lower maintenance requirements, and quieter operation compared to traditional brushed motors.
 
-However, there are some drawbacks to choosing a brushless motor over brushed motor such as complex wiring, high cost for the motor's positional sensor and the motor's driver.
+However, adopting BLDC motors also introduces certain challenges. These include more complex wiring setups, higher costs associated with positional sensors, and the added expense of dedicated motor drivers capable of precise control.
 
-The objective for this project is to create a simple close-loop position control system by using only the RP2040 and SimpleFOCMini via microPython code. The key point is being able to perform a field-oriented control (FOC) by using the SimpleFOCMini which can significantly lower the cost of running a BL motor.
-
+The objective of this project is to develop a simple closed-loop position control system for a BLDC motor using only a Raspberry Pi RP2040 microcontroller and a SimpleFOCMini driver board, with all control logic written in MicroPython. A key focus is to achieve field-oriented control (FOC) via the SimpleFOCMini, providing smooth and efficient motor operation while minimizing system complexity and cost.
 # Hardware used in this project:
 
 Brushless Motor: https://www.intelligentactuator.com/partsearch/robocylinder/pg377_RCL-SA3L.pdf
@@ -26,15 +24,23 @@ SimpleFOCMini: https://docs.simplefoc.com/simplefocmini
 
 # Close loop control method:
 
-1.) Create a 6-mode control method by dividing electrical degree (encoder position) into 8 sector for choosing duty cycle paattern
+This project implements a simple closed-loop position control for a BLDC motor using the following approach:
 
-2.) Vary duty cycles by using float variable (0 - 1) to increase or decrease duty cycles
+1.) 6-Mode Control via Electrical Angle Sectors:
 
-3.) Using encoder to control movement section and direction by comparing desired position to current position read by encoder
+The electrical rotation (0–360°) is divided into 8 equal sectors based on the encoder position. Each sector is assigned a specific duty cycle pattern to drive the motor phases, effectively creating a 6-mode control system for commutation.
+
+2.) Dynamic Duty Cycle Adjustment:
+
+The duty cycle for each active phase is controlled using a floating-point variable (ranging from 0.0 to 1.0) to increase or decrease the power delivered to the motor phases, providing smoother and more precise movement.
+
+3.) Position and Direction Control via Encoder Feedback:
+
+The system continuously reads the current position from the motor’s encoder and compares it to the target position. Based on the difference, the control logic determines the movement direction and activates the appropriate sectors to drive the motor toward the desired position.
 
 # Results:
 
 
 https://github.com/user-attachments/assets/88a1d1a9-b69e-4c54-ac2b-c14129728297
 
-From the results, the maximum error is less than 15 pulses from 1578 pulse or about 0.95%
+From testing, the maximum positioning error observed was less than 15 pulses out of 1578 pulses per motor's full rotation, which corresponds to an error of approximately 0.95%. This indicates that the closed-loop position control system is able to track the desired position with very high accuracy, given the simple control method and limited hardware.
