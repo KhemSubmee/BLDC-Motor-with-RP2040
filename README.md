@@ -154,16 +154,20 @@ The duty cycle for each active phase is controlled using a floating-point variab
 
 The system continuously reads the current position from the motor’s encoder and compares it to the target position. Based on the difference, the control logic determines the movement direction and activates the appropriate sectors to drive the motor toward the desired position.
 
+![image](https://github.com/user-attachments/assets/aff13df5-f0c2-4c33-9e7b-c8980bb5a688)
+
+This diagram illustrates a concept of the code for closed-loop position control (forward movement)
+
 ## Code example
 ```
 if sector == 0:
- return (0, 10000, 0)
+ return (0, 10000, 0) # minimum initial duty cycle at 10000
  elif sector == 1:
- return (0, d, int(d * t))
+ return (0, d, int(d * t)) # u = 0, v = 15000, w = 0 -> 15000
  elif sector == 2:
- return (0, int(d * (1 - t)), d)
+ return (0, int(d * (1 - t)), d) # u = 0, v = 15000 -> 0, w = 15000
  elif sector == 3:
- return (int(d * t), 0, d)
+ return (int(d * t), 0, d) # u = 0 -> 15000, v = 0, w = 15000
 ```
 This code segment implements a semi-sinusoidal control method for a BLDC motor by assigning PWM duty cycles to each of the three motor phases (U, V, W) based on the current electrical sector. Using a constant base duty cycle d = 15000 and a float t ranging from 0 to 1 (representing the rotor’s progress within a sector), the duty cycles are smoothly varied to create stepped transitions between phases, reducing torque ripple and enabling smoother motor rotation. This approach simplifies sinusoidal control by approximating sinusoidal phase currents without requiring complex calculations, offering a practical balance between performance and implementation ease on hardware like the RP2040.
 
