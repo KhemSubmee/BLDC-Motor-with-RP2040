@@ -118,12 +118,27 @@ Field Oriented Control (FOC) is an advanced technique for controlling BLDC or PM
 
 ![image](https://github.com/user-attachments/assets/491a6950-2a38-44da-bc32-929c37ec8741)
 
+### 2.2 [SimpleFOCMini](https://docs.simplefoc.com/simplefocmini)
+SimpleFOCMini is a small, affordable, and highly capable open-source motor controller board designed specifically for brushless DC (BLDC) and gimbal motors. It runs the SimpleFOC (Field Oriented Control) firmware — a popular Arduino-based open-source library and control platform for BLDC motor control.
+
+It’s essentially a compact inverter (3-phase driver) paired with an MCU, designed to implement FOC algorithms easily for precise, quiet, and efficient motor control.
+
+SimpleFOCMini acts as both:
+
+1.) Inverter - switching the 3-phase voltages applied to the BLDC motor windings
+
+2.) Controller - reading position feedback (from encoder/hall sensors), calculating the FOC control algorithm, and generating appropriate PWM signals for the inverter.
+
+The board uses Field Oriented Control (FOC) - an advanced control method where motor currents are transformed into a rotating reference frame, allowing precise independent control of torque and magnetic flux.
+
+![connection_mini](https://github.com/user-attachments/assets/129f200b-2329-4a45-941d-219ccba65d40)
+
 ### 3. Control by Inverter
 In a BLDC motor, controlling the direction and timing of current through the three motor phases (U, V, W) is essential for generating a rotating magnetic field. Unlike brushed DC motors, which use brushes and a commutator for switching current direction, BLDC motors rely on inverter circuits made of electronic switches (typically MOSFETs).
 
 The inverter sequentially switches current between different phase pairs (e.g. U→W, U→V) based on the control method used. In 120-degree conduction control, only two phases are active at a time, while in sinusoidal control and FOC, all three phases are modulated continuously.
 
-To regulate the magnitude of the current, inverters use Pulse Width Modulation (PWM). By adjusting the duty cycle (the ratio of ON time to total period), the effective voltage — and therefore the phase current — is controlled. Increasing the duty cycle raises the current, while decreasing it lowers the current.
+To regulate the magnitude of the current, inverters use Pulse Width Modulation (PWM). By adjusting the duty cycle (the ratio of ON time to total period), the effective voltage, and therefore the phase current is controlled. Increasing the duty cycle raises the current, while decreasing it lowers the current.
 
 120-degree control uses simpler two-phase PWM switching.
 
@@ -162,15 +177,15 @@ This part of the codecalculates the error, multiplies it by the proportional gai
 
 This project implements a simple closed-loop position control for a BLDC motor using the following approach:
 
-1.) 6-Mode Control via Electrical Angle Sectors:
+**1.) 6-Mode Control via Electrical Angle Sectors:**
 
 The electrical rotation (0–360°) is divided into 8 equal sectors based on the encoder position. Each sector is assigned a specific duty cycle pattern to drive the motor phases, effectively creating a 6-mode control system for commutation.
 
-2.) Dynamic Duty Cycle Adjustment:
+**2.) Dynamic Duty Cycle Adjustment:**
 
 The duty cycle for each active phase is controlled using a floating-point variable (ranging from 0.0 to 1.0) to increase or decrease the power delivered to the motor phases, providing smoother and more precise movement.
 
-3.) Position and Direction Control via Encoder Feedback:
+**3.) Position and Direction Control via Encoder Feedback:**
 
 The system continuously reads the current position from the motor’s encoder and compares it to the target position. Based on the difference, the control logic determines the movement direction and activates the appropriate sectors to drive the motor toward the desired position.
 
@@ -189,7 +204,7 @@ if sector == 0:
  elif sector == 3:
  return (int(d * t), 0, d) # u = 0 -> 15000, v = 0, w = 15000
 ```
-This code segment implements a semi-sinusoidal control method for a BLDC motor by assigning PWM duty cycles to each of the three motor phases (U, V, W) based on the current electrical sector. Using a constant base duty cycle d = 15000 and a float t ranging from 0 to 1 (representing the rotor’s progress within a sector), the duty cycles are smoothly varied to create stepped transitions between phases, reducing torque ripple and enabling smoother motor rotation. This approach simplifies sinusoidal control by approximating sinusoidal phase currents without requiring complex calculations, offering a practical balance between performance and implementation ease on hardware like the RP2040.
+This code segment implements a semi-sinusoidal control method for a BLDC motor by assigning PWM duty cycles to each of the three motor phases (U, V, W) based on the current electrical sector. Using a constant maximum duty cycle d = 15000 and a float t ranging from 0 to 1 (representing the rotor’s progress within a sector), the duty cycles are smoothly varied to create stepped transitions between phases, reducing torque ripple and enabling smoother motor rotation. This approach simplifies sinusoidal control by approximating sinusoidal phase currents without requiring complex calculations, offering a practical balance between performance and implementation ease on hardware like the RP2040.
 
 # Results:
 
